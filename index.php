@@ -7,7 +7,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   if (!empty($_COOKIE['save'])) {
     setcookie('save', '', 100000);//удаление
+    setcookie('login', '', 100000);
+    setcookie('pass', '', 100000);
     $messages[] = '<div class="saves">Спасибо, результаты сохранены!</div>';
+
+    // Если в куках есть пароль, то выводим сообщение.
+    if (!empty($_COOKIE['pass'])) {
+      $messages[] = sprintf('<div class="collogin"><a href="login.php">войти</a> <br> 
+      с логином <strong>%s</strong>
+      <br> и паролем <strong>%s</strong> <br> для изменения данных.</div>',
+        strip_tags($_COOKIE['login']),
+        strip_tags($_COOKIE['pass']));
+    }
   }
 
   $errors = array();
@@ -73,21 +84,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   }
 
   $values = array();
-  $values['name'] = empty($_COOKIE['name_value']) ? '' : $_COOKIE['name_value'];
-  $values['email'] = empty($_COOKIE['email_value']) ? '' : $_COOKIE['email_value'];
-  $values['biography'] = empty($_COOKIE['biography_value']) ? '' : $_COOKIE['biography_value'];
-  $values['gender'] = empty($_COOKIE['gender_value']) ? '' : $_COOKIE['gender_value'];
-  $values['limbs'] = empty($_COOKIE['limbs_value']) ? '' : $_COOKIE['limbs_value'];
-  $values['agree'] = empty($_COOKIE['agree_value']) ? '' : $_COOKIE['agree_value'];
-  $values['birth'] = empty($_COOKIE['birth_value']) ? '' : ($_COOKIE['birth_value']);
+  $values['name'] = empty($_COOKIE['name_value']) ? '' : strip_tags($_COOKIE['name_value']);
+  $values['email'] = empty($_COOKIE['email_value']) ? '' : strip_tags($_COOKIE['email_value']);
+  $values['biography'] = empty($_COOKIE['biography_value']) ? '' : strip_tags($_COOKIE['biography_value']);
+  $values['gender'] = empty($_COOKIE['gender_value']) ? '' : strip_tags($_COOKIE['gender_value']);
+  $values['limbs'] = empty($_COOKIE['limbs_value']) ? '' : strip_tags($_COOKIE['limbs_value']);
+  $values['agree'] = empty($_COOKIE['agree_value']) ? '' : strip_tags($_COOKIE['agree_value']);
+  $values['birth'] = empty($_COOKIE['birth_value']) ? '' : strip_tags(($_COOKIE['birth_value']));
 
 
   $values['ability'] = empty($_COOKIE['ability_value']) ?  array() : unserialize($_COOKIE['ability_value']);
 
 
+  // Если нет предыдущих ошибок ввода, есть кука сессии, начали сессию и
+  // ранее в сессию записан факт успешного логина.
+  if (empty($errors) && !empty($_COOKIE[session_name()]) &&
+      session_start() && !empty($_SESSION['login'])) {
+
+    $stmt = $db->prepare("SELECT * FROM application_5 where id=?");
+        $stmt -> execute($_SESSION['uid']);
+        $row = $stmt->fetch();
+
+  $values['name'] = empty($row['name']) ? '' : strip_tags($row['name']);
+  $values['email'] = empty($row['email']) ? '' : strip_tags($row['email']);
+  $values['date_of_birth'] = empty($row['birth']) ? '' :strip_tags($row['birth']);
+  $values['gender'] = empty($row['gender']) ? '' : strip_tags($row['gender']);
+  $values['limbs'] = empty($row['limbs']) ? '' : strip_tags($row['limbs']);
+  $values['biography'] = empty($row['biography']) ? '' : strip_tags($row['biography']);
+  $values['limbs'] = empty($row['limbs']) ? '' : strip_tags($row['limbs']);
+
+    printf('Вход с логином %s, uid %d', $_SESSION['login'], $_SESSION['uid']);
+  }
 
   include('form.php');
 }
+
+
+
+
+
+
+
+
+
 
 //-----------------------------------------------------------------------------------------
 // Иначе если POST (нужно проверить данные на пустоту или правильный ввод и сохранить их в файл)
@@ -214,15 +253,30 @@ else {
     setcookie('ability_error', '', 100000);
     setcookie('birth_error', '', 100000);
   }
+  // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
+  if (!empty($_COOKIE[session_name()]) &&
+  session_start() && !empty($_SESSION['login'])) {
 
 
+      $stmt = $db->prepare("UPDATE application_5 SET name = ?, email = ?, biography = ?,gender = ?, limbs = ?, birth = ?  WHERE id = ?");
+      $stmt -> execute([$_POST['name'], $_POST['email'],$_POST['biography'] , $_POST['gender'], $_POST['limbs'], $_POST['birth'], $_SESSION['uid']]);
+  }
+  else {
+    // Генерируем уникальный логин и пароль.
+    $login = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, rand(3,9)).rand(1000, 999999);;
+    $pass = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM0123456789*-+!#$%&_'), 0, rand(10,15));;
 
-   //-------------------------------Сохранение в базу данных.----------------------
+    // Сохраняем в Cookies.
+    setcookie('login', $login);
+    setcookie('pass', $pass);
+
+    // TODO: Сохранение данных формы, логина и хеш md5() пароля в базу данных.
+    //-------------------------------Сохранение в базу данных.----------------------
   $db = new PDO('mysql:host=localhost;dbname=u52945', 'u52945', '3219665',
-    [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+  [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
   try {
-    $stmt = $db->prepare("INSERT INTO application (name, email, biography, gender, limbs, birth) 
+    $stmt = $db->prepare("INSERT INTO application_5 (name, email, biography, gender, limbs, birth) 
     VALUES (:name, :email, :biography, :gender, :limbs, :birth)");
     $stmt->bindParam(':name', $_POST['name']);
     $stmt->bindParam(':email', $_POST['email']);
@@ -235,19 +289,26 @@ else {
 
     foreach ($_POST['ability'] as $ability)
     {
-      $stmt = $db->prepare("INSERT INTO application_ability (application_id, ability_id)
+      $stmt = $db->prepare("INSERT INTO application_ability_5 (application_id, ability_id)
       VALUES (:application_id, (SELECT id FROM ability WHERE name=:ability_name))");
       $stmt->bindParam(':application_id', $application_id);
       $stmt->bindParam(':ability_name', $ability);
       $stmt->execute();
     }   
 
+    $stmt = $db->prepare("INSERT INTO users_5 (id, login, password) 
+    VALUES (:id, :login, :password)");
+    $stmt->bindParam(':id', $application_id);
+    $stmt->bindParam(':login', $login);
+    $stmt->bindParam(':password', password_hash($pass, PASSWORD_DEFAULT));
+    $stmt->execute();
   }
 
   catch(PDOException $e) {
     print('ошибка при отправке данных: ' .$e->getMessage());
     exit();
   }
+}
 
   //--------------------------------------------------------------------------
 

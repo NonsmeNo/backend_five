@@ -1,7 +1,5 @@
 body {
-    background-color: hwb(277 10% 81%);
     font-family: Verdana;
-  
     background: -webkit-linear-gradient(90deg,#11088a,#6254e4,#9375f0,#4084fe, #c465d9); /* Chrome 10-25, Safari 5.1-6 */ background: linear-gradient(90deg,#11088a,#6254e4,#9375f0,#4084fe, #c465d9);
 }
 
@@ -159,10 +157,9 @@ form .check {
     text-align: center;
     border-radius: 5px;
     color: rgb(255, 255, 255);
-    font-size: 15px;
+    font-size: 18px;
 
     max-width: 500px;
-    margin-bottom: 10px;
     margin: 5px auto 10px auto;
 }
 
@@ -176,10 +173,32 @@ form .check {
 
     border-radius: 5px;
     color: rgb(18, 124, 14);
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
 
     max-width: 500px;
-    margin-bottom: 10px;
     margin: 5px auto 10px auto;
+}
+
+.collogin {
+    border: 5px solid #e4289c;
+    background-color: #e4289c;
+    box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.5);
+
+    border-radius: 5px;
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    text-align: center;
+
+    max-width: 500px;
+    margin: 50px auto 10px auto;
+}
+
+.collogin a {
+    color: #000000;
+    text-decoration:none;
+    font-size: 30px;
+}
+.collogin a:hover {
+    text-decoration:underline;
 }
