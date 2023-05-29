@@ -1,5 +1,5 @@
 <?php
-
+//ХЭШШШШШШШШ
 header('Content-Type: text/html; charset=UTF-8');
 
 $db = new PDO('mysql:host=localhost;dbname=u52945', 'u52945', '3219665',
@@ -100,29 +100,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   // Если нет предыдущих ошибок ввода, есть кука сессии, начали сессию и
   // ранее в сессию записан факт успешного логина.
-  if (count(array_filter($errors)) === 0 && !empty($_COOKIE[session_name()]) &&
-      session_start() && !empty($_SESSION['login'])) {
-
+  if (count(array_filter($errors)) === 0 && !empty($_COOKIE[session_name()]) && session_start() && !empty($_SESSION['login'])) {
     $stmt = $db->prepare("SELECT * FROM application_5 where user_id=?");
-        $stmt -> execute($_SESSION['uid']);
-        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt -> execute([$_SESSION['uid']]);
+    $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $values['name'] = empty($row[0]['name']) ? '' : strip_tags($row[0]['name']);
     $values['email'] = empty($row[0]['email']) ? '' : strip_tags($row[0]['email']);
     $values['biography'] = empty($row[0]['biography']) ? '' : strip_tags($row[0]['biography']);
     $values['gender'] = empty($row[0]['gender']) ? '' : strip_tags($row[0]['gender']);
     $values['limbs'] = empty($row[0]['limbs']) ? '' : strip_tags($row[0]['limbs']);
-    $values['birth'] = empty($row[0]['birth']) ? '' :strip_tags($row[0]['birth']); //согласие
+    $values['birth'] = empty($row[0]['birth']) ? '' :strip_tags($row[0]['birth']);
+    //$values['agree'] = empty($result[0]['agree']) ? '' : strip_tags($result[0]['agree']);
 
-    $stmt = $db->prepare("SELECT * FROM application_ability_5 where application_id=(SELECT id FROM application_5 where user_id=?) ");
+    $stmt = $db->prepare("SELECT * FROM application_ability_5 where application_id=(SELECT id FROM application_5 where user_id=?)");
     $stmt -> execute([$_SESSION['uid']]);
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($row as $one_ab) {
-      $values['ability'][$one_ab['ability_id']-1] = empty($one_ab) ? '' : strip_tags($one_ab['ability_id']);
-    }
 
-    printf('Вход с логином %s, uid %d', $_SESSION['login'], $_SESSION['uid']);
+      switch ($one_ab['ability_id']) {
+        case 1:
+          $values['ability'][0] = empty($one_ab) ? :'immortality';
+            break;
+        case 2:
+          $values['ability'][1] = empty($one_ab) ? :'passingWalls';
+            break;
+        case 3:
+          $values['ability'][3] = empty($one_ab) ? :'levitation';
+            break;
+      }
+    }
+   
+    $messages[] = sprintf('<div class="collogin">ВЫПОЛНЕН ВХОД <br> 
+    с логином <strong>%s</strong> и uid <strong>%s</strong>
+    <br>вы можете изменить свои данные</div>',
+    $_SESSION['login'],
+    $_SESSION['uid']);
+
   }
 
   include('form.php');
@@ -279,13 +294,13 @@ else {
       $stmt = $db->prepare("UPDATE application_5 SET name = ?, email = ?, biography = ?,gender = ?, limbs = ?, birth = ?  WHERE user_id = ?");
       $stmt -> execute([$_POST['name'], $_POST['email'],$_POST['biography'] , $_POST['gender'], $_POST['limbs'], $_POST['birth'], $_SESSION['uid']]);
 
-      $stmt = $db->prepare("SELECT * FROM application_ability_5 where application_id=(SELECT id FROM application_5 where user_id=?) ");
+      $stmt = $db->prepare("SELECT * FROM application_ability_5 where application_id=(SELECT id FROM application_5 where user_id=?)");
       $stmt -> execute([$_SESSION['uid']]);
       $row_2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-      $c=0;
       $flag=false;
+      
       foreach ($_POST['ability'] as $ability) {
         if ($row_2[$ability]!=$ability){
             $flag=true;
@@ -320,8 +335,8 @@ else {
   else {
     // Генерируем уникальный логин и пароль.
     $login = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, rand(3,9)).rand(1000, 999999);;
-    $pass = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM0123456789*-+!#$%&_'), 0, rand(10,15));;
-
+    //$pass = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM0123456789*-+!#$%&_'), 0, rand(10,15));;
+    $pass = uniqid();
     // Сохраняем в Cookies.
     setcookie('login', $login);
     setcookie('pass', $pass);
@@ -329,15 +344,22 @@ else {
     // TODO: Сохранение данных формы, логина и хеш md5() пароля в базу данных.
     //-------------------------------Сохранение в базу данных.----------------------
   try {
-    $stmt = $db->prepare("INSERT INTO application_5 (name, email, biography, gender, limbs, birth) 
-    VALUES (:name, :email, :biography, :gender, :limbs, :birth)");
+    $stmt = $db->prepare("INSERT INTO users_5 (login, password) VALUES (?,?)");
+        $stmt->execute([$login, password_hash($pass, PASSWORD_DEFAULT)]);
+
+      $uid = $db->lastInsertId();
+
+    $stmt = $db->prepare("INSERT INTO application_5 (name, email, biography, gender, limbs, birth, user_id) 
+    VALUES (:name, :email, :biography, :gender, :limbs, :birth, :user_id)");
     $stmt->bindParam(':name', $_POST['name']);
     $stmt->bindParam(':email', $_POST['email']);
     $stmt->bindParam(':biography', $_POST['biography']);
     $stmt->bindParam(':gender', $_POST['gender']);
     $stmt->bindParam(':limbs', $_POST['limbs']);
     $stmt->bindParam(':birth', $_POST['birth']);
+    $stmt->bindParam(':user_id', $uid);
     $stmt->execute();
+
     $application_id = $db->lastInsertId();
 
     foreach ($_POST['ability'] as $ability)
@@ -348,12 +370,6 @@ else {
       $stmt->bindParam(':ability_name', $ability);
       $stmt->execute();
     }   
-
-    $stmt = $db->prepare("INSERT INTO users_5 (login, password) 
-    VALUES (:login, :password)");
-    $stmt->bindParam(':login', $login);
-    $stmt->bindParam(':password', password_hash($pass, PASSWORD_DEFAULT));
-    $stmt->execute();
   }
 
   catch(PDOException $e) {

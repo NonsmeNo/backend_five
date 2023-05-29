@@ -5,7 +5,8 @@ CREATE TABLE application_5 (
   biography nvarchar(1500) NOT NULL DEFAULT '',
   gender varchar(1) NOT NULL DEFAULT '',
   limbs int(1) NOT NULL DEFAULT 0,
-  birth varchar(10) NOT NULL DEFAULT ''
+  birth varchar(10) NOT NULL DEFAULT '',
+  user_id int(10) unsigned NOT NULL
 );
 
 CREATE TABLE ability_5 (
@@ -26,3 +27,9 @@ CREATE TABLE users_5 (
   login varchar(128) NOT NULL DEFAULT '',
   password varchar(128) NOT NULL DEFAULT ''
 );
+
+
+DROP TABLE users_5;
+DROP TABLE application_ability_5;
+DROP TABLE ability_5;
+DROP TABLE application_5;

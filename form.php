@@ -20,16 +20,6 @@
         }
     ?>
 
-<?php
-if (!empty($_COOKIE[session_name()]) && !empty($_SESSION['login'])){
-    echo '
-        <form action="" method="POST" >
-            <input type="hidden" name="logout" value="true">
-            <button type="submit">Выйти</button>
-        </form>
-    ';
-}
-?>
 
     <form action="index.php" method="POST">
 
@@ -127,6 +117,16 @@ if (!empty($_COOKIE[session_name()]) && !empty($_SESSION['login'])){
 
     </form>
 
+    <?php
+if (!empty($_COOKIE[session_name()]) && !empty($_SESSION['login'])){
+    echo '
+        <form action="" method="POST" >
+           <!-- <input type="hidden" name="logout" value="true">-->
+            <button type="submit">Выйти</button>
+        </form>
+    ';
+}
+?>
 
 </div>
 

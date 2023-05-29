@@ -68,14 +68,15 @@ else {
   // Выдать сообщение об ошибках.
 
   try {
-    $stmt = $db->prepare("SELECT * FROM users_5 where login=?");
+      $stmt = $db->prepare("SELECT * FROM users_5 where login=?");
       $stmt -> execute([$_POST['login']]);
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
       $flag=false;
-      if(password_verify($_POST['pass'],$row["pass"]))
+      echo($_POST['pass']);
+      echo($_POST['password']);
+      if(password_verify($_POST['pass'], $row['password']))
       {
-          $_SESSION['login'] = $_POST['login'];
-          
+          $_SESSION['login'] = $_POST['login']; 
           $_SESSION['uid'] =$row["id"];
           header('Location: ./');
       }
