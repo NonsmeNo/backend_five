@@ -22,10 +22,7 @@ PRIMARY KEY (application_id, ability_id)
 ); 
 
 CREATE TABLE users_5 (
-id int(10) unsigned NOT NULL,
-login varchar(128) NOT NULL DEFAULT '',
-pass varchar(128) NOT NULL DEFAULT '',
-FOREIGN KEY (id) REFERENCES application_5(id),
-PRIMARY KEY (id)
-); 
-
+  id int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  login varchar(128) NOT NULL DEFAULT '',
+  password varchar(128) NOT NULL DEFAULT ''
+);

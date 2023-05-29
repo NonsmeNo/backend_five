@@ -4,21 +4,32 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="style.css">
-    <title>backend_four</title>
+    <title>backend_five</title>
 </head>
 <body>
 
 <div class="content">
 
     <?php
-    if (!empty($messages)) {
-    print('<div id="messages">');
-    foreach ($messages as $message) {
-        print($message);
-    }
-    print('</div>');
-    }
+        if (!empty($messages)) {
+            print('<div id="messages">');
+            foreach ($messages as $message) {
+                print($message);
+            }
+            print('</div>');
+        }
     ?>
+
+<?php
+if (!empty($_COOKIE[session_name()]) && !empty($_SESSION['login'])){
+    echo '
+        <form action="" method="POST" >
+            <input type="hidden" name="logout" value="true">
+            <button type="submit">Выйти</button>
+        </form>
+    ';
+}
+?>
 
     <form action="index.php" method="POST">
 

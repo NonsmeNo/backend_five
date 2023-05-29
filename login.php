@@ -8,8 +8,6 @@
  * для изменения ранее введенных данных.
  **/
 
-// Отправляем браузеру правильную кодировку,
-// файл login.php должен быть в кодировке UTF-8 без BOM.
 header('Content-Type: text/html; charset=UTF-8');
 
 // Начинаем сессию.
@@ -40,22 +38,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 <body>
 <form action="" method="POST">
 
-<h2>Авторизация</h2>
+  <h2>Авторизация</h2>
 
-<div class="fields">
-    <div class="item">
-        <label for="name">Логин</label><br>
-        <input type="text" placeholder="Введите логин" >
-    </div>
-    <div class="item">
-            <label for="email">Пароль</label><br>
-            <input type="text" placeholder="Введите пароль">     
-    </div>
-</div>
-
-  <div>
-    <button  type="submit">Войти</button>
+  <div class="fields">
+      <div class="item">
+          <label for="name">Логин</label><br>
+          <input name="login" type="text" placeholder="Введите логин" />
+      </div>
+      <div class="item">
+              <label for="email">Пароль</label><br>
+              <input name="pass" type="text" placeholder="Введите пароль" />     
+      </div>
   </div>
+
+    <div>
+      <button  type="submit">Войти</button>
+    </div>
 </form>
 </body>
 
@@ -70,21 +68,17 @@ else {
   // Выдать сообщение об ошибках.
 
   try {
-    $stmt = $db->prepare("SELECT * FROM users_5 where id=?");
-
-    
-    $stmt -> execute([$_POST['login']]);
-    $row = $stmt->fetch();
-
-
-    if(password_verify($_POST['pass'],$row["pass"]))
-    {
-        $_SESSION['login'] = $_POST['login'];  // Если все ок, то авторизуем пользователя.
-        
-        $_SESSION['uid'] =$row["id"]; // Записываем ID пользователя.
-        // Делаем перенаправление.
-        header('Location: ./');
-    }
+    $stmt = $db->prepare("SELECT * FROM users_5 where login='zely948179'");
+      $stmt -> execute([$_POST['login']]);
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      $flag=false;
+      if(password_verify($_POST['pass'],$row["pass"]))
+      {
+          $_SESSION['login'] = $_POST['login'];
+          
+          $_SESSION['uid'] =$row["id"];
+          header('Location: ./');
+      }
    
         
     }
