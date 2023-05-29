@@ -11,17 +11,17 @@
 header('Content-Type: text/html; charset=UTF-8');
 $db = new PDO('mysql:host=localhost;dbname=u52945', 'u52945', '3219665',
   [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+
+
 // Начинаем сессию.
 session_start();
 // В суперглобальном массиве $_SESSION хранятся переменные сессии.
 // Будем сохранять туда логин после успешной авторизации
 if (!empty($_SESSION['login'])) {
-  // Если есть логин в сессии, то пользователь уже авторизован.
-  // TODO: Сделать выход (окончание сессии вызовом session_destroy()
-  //при нажатии на кнопку Выход).
-  // Делаем перенаправление на форму.
   header('Location: ./');
 }
+
+
 
 // В суперглобальном массиве $_SERVER PHP сохраняет некторые заголовки запроса HTTP
 // и другие сведения о клиненте и сервере, например метод текущего запроса $_SERVER['REQUEST_METHOD'].
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 </head>
 <body>
-<form action="" method="POST">
+<form class="form1" action="" method="POST">
 
   <h2>Авторизация</h2>
 
@@ -72,8 +72,6 @@ else {
       $stmt -> execute([$_POST['login']]);
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
       $flag=false;
-      echo($_POST['pass']);
-      echo($_POST['password']);
       if(password_verify($_POST['pass'], $row['password']))
       {
           $_SESSION['login'] = $_POST['login']; 

@@ -21,7 +21,7 @@
     ?>
 
 
-    <form action="index.php" method="POST">
+    <form  class="form1" action="index.php" method="POST">
 
         <h2>Регистрация</h2>
 
@@ -120,9 +120,8 @@
     <?php
 if (!empty($_COOKIE[session_name()]) && !empty($_SESSION['login'])){
     echo '
-        <form action="" method="POST" >
-           <!-- <input type="hidden" name="logout" value="true">-->
-            <button type="submit">Выйти</button>
+        <form class="form2" action="" method="POST" >
+            <button name="exit" value="true" type="submit">Выйти</button>
         </form>
     ';
 }

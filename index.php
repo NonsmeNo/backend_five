@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
           $values['ability'][1] = empty($one_ab) ? :'passingWalls';
             break;
         case 3:
-          $values['ability'][3] = empty($one_ab) ? :'levitation';
+          $values['ability'][2] = empty($one_ab) ? :'levitation';
             break;
       }
     }
@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 else {
 
   // окончание сессии
-  if (isset($_POST['logout']) && $_POST['logout'] == 'true') {
+  if (isset($_POST['exit']) && $_POST['exit'] == 'true') {
     session_destroy();
     setcookie(session_name(), '', 100000);
     setcookie('PHPSESSID', '', 100000, '/');
@@ -300,13 +300,27 @@ else {
 
 
       $flag=false;
-      
-      foreach ($_POST['ability'] as $ability) {
-        if ($row_2[$ability]!=$ability){
-            $flag=true;
-            break;
+
+        foreach ($_POST['ability'] as $ability)
+        {
+          switch ($ability) {
+            case "immortality":
+                if ($array[0] != $ability) {
+                  $flag=true;
+                  break;
+                }
+            case "passingWalls":
+              if ($array[1] != $ability) {
+                $flag=true;
+                break;
+              }
+            case "levitation":
+              if ($array[2] != $ability) {
+                $flag=true;
+                break;
+            }
+          }
         }
-    }
 
 
 
@@ -324,7 +338,7 @@ else {
         {
           $stmt = $db->prepare("INSERT INTO application_ability_5 (application_id, ability_id)
           VALUES (:application_id, (SELECT id FROM ability WHERE name=:ability_name))");
-          $stmt->bindParam(':application_id', $result[0]["id"]);
+          $stmt->bindParam(':application_id', $row_3[0]["id"]);
           $stmt->bindParam(':ability_name', $ability);
           $stmt->execute();
         }   
@@ -332,11 +346,12 @@ else {
       }
 
   }
+
   else {
     // Генерируем уникальный логин и пароль.
     $login = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, rand(3,9)).rand(1000, 999999);;
-    //$pass = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM0123456789*-+!#$%&_'), 0, rand(10,15));;
-    $pass = uniqid();
+    $pass = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM0123456789*-+!#$%&_'), 0, rand(10,15));;
+    //$pass = uniqid();
     // Сохраняем в Cookies.
     setcookie('login', $login);
     setcookie('pass', $pass);

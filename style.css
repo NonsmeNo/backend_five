@@ -3,7 +3,7 @@ body {
     background: -webkit-linear-gradient(90deg,#11088a,#6254e4,#9375f0,#4084fe, #c465d9); /* Chrome 10-25, Safari 5.1-6 */ background: linear-gradient(90deg,#11088a,#6254e4,#9375f0,#4084fe, #c465d9);
 }
 
-form {
+.form1 {
     border-radius: 10px;
     color: #000000;
     font-weight: bold;
@@ -19,25 +19,25 @@ form {
     box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.5);
 }
 
-form h2 {
+.form1 h2 {
     margin: 40px auto 10px auto;
     text-align: center;
 
 }
 
-form .fields {
+.form1 .fields {
     color: rgb(0, 0, 0);
     display: flex;
     flex-direction: column;
     margin: 10px 40px;
 }
 
-form .inlblock {
+.form1 .inlblock {
     display: flex;
     flex-direction: row;
 }
 
-form .colblock {
+.form1 .colblock {
     display: flex;
     flex-direction: column;
     width: 50%;
@@ -45,7 +45,7 @@ form .colblock {
 
 }
 
-form button {
+.form1 button {
     height: 100vh;  
     overflow-y: hidden;
     background: -webkit-linear-gradient(90deg,#11088a,#6254e4,#9375f0,#4084fe, #c465d9);
@@ -64,14 +64,14 @@ form button {
     font-size: 20px;
 }
 
-form .сheck {
+.form1 .сheck {
     margin: 0px 40px 20px 40px;
 }
 
-form button:hover {
+.form1 button:hover {
     opacity: 0.9;
 }
-form .fields input {
+.form1 .fields input {
     border-radius: 5px;
     border: 3px solid rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
@@ -82,7 +82,7 @@ form .fields input {
     margin-bottom: 20px;
 }
 
-form  .fields textarea {
+.form1 .fields textarea {
     resize: none;
     height: 150px;
     width: 100%;
@@ -94,11 +94,11 @@ form  .fields textarea {
     margin-bottom: 20px;
 }
 
-form .birth{
+.form1 .birth{
     margin-bottom: 30px;   
 }
 
-form .birth input {
+.form1 .birth input {
     margin-top: 10px;
     width:130px;
     height: 30px;
@@ -109,28 +109,28 @@ form .birth input {
 
 
 
-form .rad {
+.form1 .rad {
     margin-top: 10px;
     font-size: 15px;
 }
-form .rad label{
+.form1 .rad label{
     margin-right: 5px;
     color: rgb(0, 0, 0);
 }
 
-form .gender {
+.form1 .gender {
 
     margin-bottom: 10px;
 }
 
-form .changeGen{
+.form1 .changeGen{
     font-size: 15px;
     margin-top: 10px;
     margin-bottom: 24px;
     
 }
 
-form .powers select {
+.form1 .powers select {
     margin-top: 10px;
     width:200px;
     height: 60px;
@@ -138,12 +138,12 @@ form .powers select {
     color: rgb(0, 0, 0)
 }
 
-form .superpowers {
+.form1 .superpowers {
     margin-top: 30px;
 
 }
 
-form .check {
+.form1 .check {
     margin-bottom: 30px;
     
 
@@ -201,4 +201,24 @@ form .check {
 }
 .collogin a:hover {
     text-decoration:underline;
+}
+
+.form2 {
+    display: flex;
+    flex-direction: column;
+}
+.form2 button {
+    color: white;
+    border-radius: 5px;
+    border: 1px solid rgb(255, 255, 255);
+    width: 200px;
+    height: 50px;
+    background-color: #e4289c;
+    border: 5px solid #e4289c;
+    box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.5);
+    height: 50px;
+    margin: 10px auto;
+
+
+
 }
