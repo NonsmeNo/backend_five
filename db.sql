@@ -27,9 +27,3 @@ CREATE TABLE users_5 (
   login varchar(128) NOT NULL DEFAULT '',
   password varchar(128) NOT NULL DEFAULT ''
 );
-
-
-DROP TABLE users_5;
-DROP TABLE application_ability_5;
-DROP TABLE ability_5;
-DROP TABLE application_5;

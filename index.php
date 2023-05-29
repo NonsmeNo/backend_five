@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       $messages[] = sprintf('<div class="collogin"><a href="login.php">войти</a> <br> 
       с логином <strong>%s</strong>
       <br> и паролем <strong>%s</strong> <br> для изменения данных.</div>',
-        strip_tags($_COOKIE['login']),
+        strip_tags($_COOKIE['login']), 
         strip_tags($_COOKIE['pass']));
     }
   }
@@ -111,7 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $values['gender'] = empty($row[0]['gender']) ? '' : strip_tags($row[0]['gender']);
     $values['limbs'] = empty($row[0]['limbs']) ? '' : strip_tags($row[0]['limbs']);
     $values['birth'] = empty($row[0]['birth']) ? '' :strip_tags($row[0]['birth']);
-    //$values['agree'] = empty($result[0]['agree']) ? '' : strip_tags($result[0]['agree']);
 
     $stmt = $db->prepare("SELECT * FROM application_ability_5 where application_id=(SELECT id FROM application_5 where user_id=?)");
     $stmt -> execute([$_SESSION['uid']]);
@@ -142,14 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   include('form.php');
 }
-
-
-
-
-
-
-
-
 
 
 //-----------------------------------------------------------------------------------------

@@ -64,18 +64,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 // Иначе, если запрос был методом POST, т.е. нужно сделать авторизацию с записью логина в сессию.
 else {
 
-  // TODO: Проверть есть ли такой логин и пароль в базе данных.
-  // Выдать сообщение об ошибках.
-
   try {
       $stmt = $db->prepare("SELECT * FROM users_5 where login=?");
       $stmt -> execute([$_POST['login']]);
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
-      $flag=false;
+      $flag = false;
       if(password_verify($_POST['pass'], $row['password']))
       {
           $_SESSION['login'] = $_POST['login']; 
-          $_SESSION['uid'] =$row["id"];
+          $_SESSION['uid'] = $row["id"];
           header('Location: ./');
       }
    
