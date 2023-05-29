@@ -145,8 +145,8 @@ else {
   // окончание сессии
   if (isset($_POST['logout']) && $_POST['logout'] == 'true') {
     session_destroy();
-    setcookie(session_name(), '', time() - 3600);
-    setcookie('PHPSESSID', '', time() - 3600, '/');
+    setcookie(session_name(), '', 100000);
+    setcookie('PHPSESSID', '', 100000, '/');
    
     header('Location: ./');
     exit();
@@ -296,7 +296,7 @@ else {
 
 
 
-      if($flag){ //если меняются данные, то удаляем старые данные из бд и вставляем новые
+      if($flag) { //если меняются данные, то удаляем старые данные из бд и вставляем новые
         $stmt = $db->prepare("DELETE FROM application_ability_5 WHERE application_id=(SELECT id FROM application_5 where user_id=?) ");
         $stmt -> execute([$_SESSION['uid']]);
 
@@ -305,10 +305,15 @@ else {
         $row_3 = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-        $stmt = $db->prepare("INSERT INTO application_ability_5 (application_id, ability_id) VALUES (?,?)");
-        foreach ($_POST['ability'] as $ability) {
-            $stmt->execute([$row_3[0]['id'], $ability]);
-        }
+        foreach ($_POST['ability'] as $ability)
+        {
+          $stmt = $db->prepare("INSERT INTO application_ability_5 (application_id, ability_id)
+          VALUES (:application_id, (SELECT id FROM ability WHERE name=:ability_name))");
+          $stmt->bindParam(':application_id', $result[0]["id"]);
+          $stmt->bindParam(':ability_name', $ability);
+          $stmt->execute();
+        }   
+        
       }
 
   }

@@ -9,10 +9,10 @@
  **/
 
 header('Content-Type: text/html; charset=UTF-8');
-
+$db = new PDO('mysql:host=localhost;dbname=u52945', 'u52945', '3219665',
+  [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 // Начинаем сессию.
 session_start();
-
 // В суперглобальном массиве $_SESSION хранятся переменные сессии.
 // Будем сохранять туда логин после успешной авторизации
 if (!empty($_SESSION['login'])) {
@@ -68,7 +68,7 @@ else {
   // Выдать сообщение об ошибках.
 
   try {
-    $stmt = $db->prepare("SELECT * FROM users_5 where login='zely948179'");
+    $stmt = $db->prepare("SELECT * FROM users_5 where login=?");
       $stmt -> execute([$_POST['login']]);
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
       $flag=false;
